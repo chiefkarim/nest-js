@@ -1,7 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { CreateProfileDto } from './dto/create-profile.dto/create-profile.dto';
-import { match } from 'assert';
 
 @Injectable()
 export class ProfilesService {
@@ -34,7 +33,12 @@ to escape the matrix and explore the perfect keyboard shortcut for love?`,
   }
 
   getById(id: string) {
-    return this.profiles.filter((profile) => id == profile.id);
+    const matchingProfile = this.profiles.filter((profile) => id == profile.id);
+    if (matchingProfile.length < 1) {
+      throw new NotFoundException(`No profile found with the id: ${id}`);
+    }
+
+    return matchingProfile;
   }
 
   create(submitedProfile: CreateProfileDto) {
@@ -45,8 +49,9 @@ to escape the matrix and explore the perfect keyboard shortcut for love?`,
 
   update(submittedProfile: CreateProfileDto, id: string) {
     const matchingProfile = this.profiles.find((profile) => profile.id == id);
-
-    if (!matchingProfile) return {};
+    if (!matchingProfile) {
+      throw new NotFoundException(`No profile found with the id: ${id}`);
+    }
 
     matchingProfile.name = submittedProfile.name;
     matchingProfile.description = submittedProfile.description;
@@ -54,7 +59,13 @@ to escape the matrix and explore the perfect keyboard shortcut for love?`,
   }
 
   delete(id: string) {
-    this.profiles = this.profiles.filter((profile) => id != profile.id);
-    return;
+    const matchingProfile = this.profiles.findIndex(
+      (profile) => profile.id == id,
+    );
+    if (matchingProfile == -1) {
+      throw new NotFoundException(`No profile found with the id: ${id}`);
+    }
+
+    this.profiles.splice(matchingProfile, 1);
   }
 }
