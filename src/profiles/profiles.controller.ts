@@ -9,10 +9,12 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CreateProfileDto } from './dto/create-profile.dto/create-profile.dto';
 import { ProfilesService } from './profiles.service';
 import { UUID } from 'crypto';
+import { ValidationError } from 'class-validator';
 
 @Controller('profiles')
 export class ProfilesController {
@@ -28,7 +30,7 @@ export class ProfilesController {
   }
 
   @Post()
-  createProfile(@Body() profile: CreateProfileDto) {
+  createProfile(@Body(new ValidationPipe()) profile: CreateProfileDto) {
     const newProfile = this.profileService.create(profile);
     return {
       message: 'new profile created successfuly!',
@@ -38,7 +40,7 @@ export class ProfilesController {
 
   @Put('/:id')
   updateProfile(
-    @Body() profile: CreateProfileDto,
+    @Body(new ValidationPipe()) profile: CreateProfileDto,
     @Param('id', ParseUUIDPipe) id: UUID,
   ) {
     const newProfile = this.profileService.update(profile, id);
