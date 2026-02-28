@@ -1,9 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { randomUUID, UUID } from 'crypto';
 import { CreateProfileDto } from './dto/create-profile.dto/create-profile.dto';
+import { RepositoryService } from './repository.service';
 
 @Injectable()
 export class ProfilesService {
+  constructor(readonly repository: RepositoryService) {}
   private profiles = [
     {
       id: randomUUID(),
@@ -28,8 +30,8 @@ to escape the matrix and explore the perfect keyboard shortcut for love?`,
     },
   ];
 
-  findAll() {
-    return this.profiles;
+  async findAll() {
+    return await this.repository.findAll();
   }
 
   getById(id: UUID) {
@@ -41,10 +43,9 @@ to escape the matrix and explore the perfect keyboard shortcut for love?`,
     return matchingProfile;
   }
 
-  create(submitedProfile: CreateProfileDto) {
+  async create(submitedProfile: CreateProfileDto) {
     const newProfile = { ...submitedProfile, id: randomUUID() };
-    this.profiles.push(newProfile);
-    return newProfile;
+    return await this.repository.create(newProfile);
   }
 
   update(submittedProfile: CreateProfileDto, id: UUID) {

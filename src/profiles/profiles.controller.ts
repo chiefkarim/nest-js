@@ -21,8 +21,8 @@ import { ProfilesGuard } from './profiles.guard';
 export class ProfilesController {
   constructor(private profileService: ProfilesService) {}
   @Get()
-  findAll() {
-    return this.profileService.findAll();
+  async findAll() {
+    return await this.profileService.findAll();
   }
 
   @Get('/:id')
@@ -31,8 +31,8 @@ export class ProfilesController {
   }
 
   @Post()
-  createProfile(@Body(new ValidationPipe()) profile: CreateProfileDto) {
-    const newProfile = this.profileService.create(profile);
+  async create(@Body(new ValidationPipe()) profile: CreateProfileDto) {
+    const newProfile = await this.profileService.create(profile);
     return {
       message: 'new profile created successfuly!',
       profile: newProfile,
