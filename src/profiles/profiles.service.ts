@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { randomUUID } from 'crypto';
+import { randomUUID, UUID } from 'crypto';
 import { CreateProfileDto } from './dto/create-profile.dto/create-profile.dto';
 
 @Injectable()
@@ -32,7 +32,7 @@ to escape the matrix and explore the perfect keyboard shortcut for love?`,
     return this.profiles;
   }
 
-  getById(id: string) {
+  getById(id: UUID) {
     const matchingProfile = this.profiles.filter((profile) => id == profile.id);
     if (matchingProfile.length < 1) {
       throw new NotFoundException(`No profile found with the id: ${id}`);
@@ -47,7 +47,7 @@ to escape the matrix and explore the perfect keyboard shortcut for love?`,
     return newProfile;
   }
 
-  update(submittedProfile: CreateProfileDto, id: string) {
+  update(submittedProfile: CreateProfileDto, id: UUID) {
     const matchingProfile = this.profiles.find((profile) => profile.id == id);
     if (!matchingProfile) {
       throw new NotFoundException(`No profile found with the id: ${id}`);
@@ -58,7 +58,7 @@ to escape the matrix and explore the perfect keyboard shortcut for love?`,
     return matchingProfile;
   }
 
-  delete(id: string) {
+  delete(id: UUID) {
     const matchingProfile = this.profiles.findIndex(
       (profile) => profile.id == id,
     );
